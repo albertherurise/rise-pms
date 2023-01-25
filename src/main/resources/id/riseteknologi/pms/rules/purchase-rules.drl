@@ -1,0 +1,106 @@
+package id.riseteknologi.pms.rules;
+
+unit PurchaseUnit;
+
+import id.riseteknologi.pms.rule.model.Product
+import id.riseteknologi.pms.rule.model.Supplier
+import id.riseteknologi.pms.rule.model.SupplierPriceChanged
+import id.riseteknologi.pms.rule.model.PurchaseResult
+
+rule "product watched"
+salience 200
+when
+	$product: /product
+then
+	purchaseResult.setProduct($product.getId);
+end
+
+rule "rise stock empty, alto spi cheaper"
+salience 100
+when
+	$rise: /rise[ name == "rise", stock == 0 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice ] 
+then
+	buyFromBoth($alto, $spi);
+end
+
+rule "rise stock empty, alto cheaper"
+salience 100
+when
+	$rise: /rise[ name == "rise", stock == 0 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice ]
+	$spi: /suppliers [ name == "spi", currentPrice > previousPrice ] 
+then
+	buyFromOne($alto);
+end
+
+rule "rise stock empty, spi cheaper"
+salience 100
+when
+	$rise: /rise[ name == "rise", stock == 0 ]
+	$alto: /suppliers [ name == "alto", currentPrice > previousPrice ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice ] 
+then
+	buyFromOne($spi);
+end
+
+rule "rise stock less than 100, alto spi cheaper"
+salience 90
+when
+	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice < $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice < $rise.price ]
+then
+	buyFromBoth($alto, $spi);
+end
+
+rule "rise stock less than 100, alto cheaper"
+salience 90
+when
+	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice < $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice > $rise.price ]
+then
+	buyFromOne($alto);
+end
+
+rule "rise stock less than 100, spi cheaper"
+salience 90
+when
+	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice > $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice < $rise.price ]
+then
+	buyFromOne($spi);
+end
+
+rule "rise stock 100-200, alto spi cheaper"
+salience 80
+when
+	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice * 0.7 < $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice * 0.7 < $rise.price ]
+then
+	buyFromBoth($alto, $spi);
+end
+
+rule "rise stock 100-200, alto cheaper"
+salience 80
+when
+	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice * 0.7 < $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice * 0.7 > $rise.price ]
+then
+	buyFromOne($alto);
+end
+
+rule "rise stock 100-200, spi cheaper"
+salience 80
+when
+	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
+	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice * 0.7 > $rise.price ]
+	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice * 0.7 < $rise.price ]
+then
+	buyFromOne($spi);
+end

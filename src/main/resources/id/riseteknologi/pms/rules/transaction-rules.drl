@@ -2,6 +2,10 @@ package id.riseteknologi.pms.rules;
 
 unit TransactionUnit;
 
+import id.riseteknologi.pms.rule.model.Supplier
+import id.riseteknologi.pms.rule.model.Transaction
+import id.riseteknologi.pms.rule.model.TransactionResult
+
 rule "transaction event"
 salience 50
 when
@@ -92,6 +96,3 @@ then
 	transactionResult.setBuy(true);
 	transactionResult.setSupplierId($spi.getId());
 end
-	
-
-	

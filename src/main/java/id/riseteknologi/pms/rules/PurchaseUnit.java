@@ -1,4 +1,4 @@
-package id.riseteknologi.pms.ruleunit;
+package id.riseteknologi.pms.rules;
 
 import org.drools.ruleunits.api.RuleUnitData;
 

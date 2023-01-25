@@ -1,7 +1,6 @@
 package id.riseteknologi.pms.rule.model;
 
-import java.math.BigDecimal;
-import id.riseteknologi.pms.model.Product;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TransactionResult {
 
-  private Product product;
-  private String status;
-  private String willBuy;
-  private Supplier buyFrom;
-  private BigDecimal price;
-
+  private UUID productId;
+  private Boolean possible;
+  private Boolean buy;
+  private UUID supplierId;
 
 }

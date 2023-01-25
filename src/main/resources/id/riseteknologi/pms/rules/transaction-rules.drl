@@ -1,0 +1,97 @@
+package id.riseteknologi.pms.rules;
+
+unit TransactionUnit;
+
+rule "transaction event"
+salience 50
+when
+	$transaction: /transaction
+then
+	transactionResult.setProductId($transaction.getProductId());
+end
+
+
+rule "stock exists transaction is possible"
+salience 49
+when
+	/transaction
+	exists /suppliers[ stock > 0 ]
+then
+	transactionResult.setPossible(true)
+end
+
+
+rule "all stock empty transaction is not possible"
+salience 40
+when
+	/transaction
+	not /suppliers[ stock > 0 ]
+then
+	transactionResult.setPossible(false);
+end
+
+
+rule "use rise stock"
+salience 45
+when
+	/transaction
+	$rise: /suppliers[ name == "rise", stock > 0 ]
+then
+	transactionResult.setPossible(true);
+	transactionResult.setBuy(false);
+end
+
+	
+rule "rise stock empty buy from alto"
+salience 40
+when
+	/transaction
+	$rise: /suppliers[ name == "rise", stock == 0 ]
+	$alto: /suppliers[ name == "alto", stock > 0 ]
+	$spi: /suppliers[ name == "spi", stock > 0, price > $alto.price ]
+then
+	transactionResult.setBuy(true);
+	transactionResult.setSupplierId($alto.getId());
+end
+
+	
+rule "rise stock empty buy from spi"
+salience 40
+when
+	/transaction
+	$rise: /suppliers[ name == "rise", stock == 0 ]
+	$alto: /suppliers[ name == "alto", stock > 0 ]
+	$spi: /suppliers[ name == "spi", stock > 0, price < $alto.price ]
+then
+	transactionResult.setBuy(true);
+	transactionResult.setSupplierId($spi.getId());
+end
+
+
+rule "rise spi stock empty buy from alto"
+salience 40
+when
+	/transaction
+	$rise: /suppliers[ name == "rise", stock == 0 ]
+	$alto: /suppliers[ name == "alto", stock > 0 ]
+	$spi: /suppliers[ name == "spi", stock == 0 ]
+then
+	transactionResult.setBuy(true);
+	transactionResult.setSupplierId($alto.getId());
+end
+
+	
+rule "rise alto stock empty buy from spi"
+salience 40
+when
+	/transaction
+	$rise: /suppliers[ name == "rise", stock == 0 ]
+	$alto: /suppliers[ name == "alto", stock == 0 ]
+	$spi: /suppliers[ name == "spi", stock > 0 ]
+then
+	transactionResult.setBuy(true);
+	transactionResult.setSupplierId($spi.getId());
+end
+	
+
+	

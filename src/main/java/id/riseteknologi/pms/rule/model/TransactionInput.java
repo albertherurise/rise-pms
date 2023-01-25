@@ -1,7 +1,5 @@
 package id.riseteknologi.pms.rule.model;
 
-import java.math.BigDecimal;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Supplier {
+public class TransactionInput {
 
-  private UUID id;
-  private String name;
-  private BigDecimal price;
-  private Long stock;
+  Transaction transaction;
+  Supplier rise;
+  Supplier alto;
+  Supplier spi;
 
 }

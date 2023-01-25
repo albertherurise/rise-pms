@@ -7,11 +7,7 @@ import org.drools.ruleunits.api.SingletonStore;
 import id.riseteknologi.pms.rule.model.Supplier;
 import id.riseteknologi.pms.rule.model.Transaction;
 import id.riseteknologi.pms.rule.model.TransactionResult;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class TransactionUnit implements RuleUnitData {
 
   private SingletonStore<Transaction> transaction;
@@ -29,9 +25,34 @@ public class TransactionUnit implements RuleUnitData {
     this.transactionResult = transactionResult;
   }
 
+  public DataStore<Supplier> getSuppliers() {
+    return suppliers;
+  }
+
+  public SingletonStore<Transaction> getTransaction() {
+    return transaction;
+  }
+
+  public TransactionResult getTransactionResult() {
+    return transactionResult;
+  }
+
   public void resetTransactionUnit() {
     this.transaction.clear();
     this.suppliers = DataSource.createStore();
     this.transactionResult = new TransactionResult();
   }
+
+  public void setSuppliers(DataStore<Supplier> suppliers) {
+    this.suppliers = suppliers;
+  }
+
+  public void setTransaction(SingletonStore<Transaction> transaction) {
+    this.transaction = transaction;
+  }
+
+  public void setTransactionResult(TransactionResult transactionResult) {
+    this.transactionResult = transactionResult;
+  }
+
 }

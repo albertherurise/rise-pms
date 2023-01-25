@@ -11,11 +11,7 @@ import id.riseteknologi.pms.rule.model.Product;
 import id.riseteknologi.pms.rule.model.PurchaseResult;
 import id.riseteknologi.pms.rule.model.Supplier;
 import id.riseteknologi.pms.rule.model.SupplierPriceChanged;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class PurchaseUnit implements RuleUnitData {
 
   private Long maxBuy;
@@ -66,6 +62,26 @@ public class PurchaseUnit implements RuleUnitData {
     }
   }
 
+  public Long getMaxBuy() {
+    return maxBuy;
+  }
+
+  public Product getProduct() {
+    return product;
+  }
+
+  public PurchaseResult getPurchaseResult() {
+    return purchaseResult;
+  }
+
+  public SingletonStore<Supplier> getRise() {
+    return rise;
+  }
+
+  public DataStore<SupplierPriceChanged> getSuppliers() {
+    return suppliers;
+  }
+
   public void resetPurchaseUnit() {
     this.maxBuy = 100L;
     this.product = null;
@@ -73,4 +89,25 @@ public class PurchaseUnit implements RuleUnitData {
     this.suppliers = DataSource.createStore();
     this.purchaseResult = new PurchaseResult();
   }
+
+  public void setMaxBuy(Long maxBuy) {
+    this.maxBuy = maxBuy;
+  }
+
+  public void setProduct(Product product) {
+    this.product = product;
+  }
+
+  public void setPurchaseResult(PurchaseResult purchaseResult) {
+    this.purchaseResult = purchaseResult;
+  }
+
+  public void setRise(SingletonStore<Supplier> rise) {
+    this.rise = rise;
+  }
+
+  public void setSuppliers(DataStore<SupplierPriceChanged> suppliers) {
+    this.suppliers = suppliers;
+  }
+
 }

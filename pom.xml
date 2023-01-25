@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>id.riseteknologi</groupId>
   <artifactId>rise-pms</artifactId>
@@ -19,6 +19,13 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+    <!--  
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>4.10.1</version>
+      </dependency>
+    -->
       <dependency>
         <groupId>${quarkus.platform.group-id}</groupId>
         <artifactId>${quarkus.platform.artifact-id}</artifactId>
@@ -58,34 +65,34 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-		    <groupId>io.quarkus</groupId>
-		    <artifactId>quarkus-hibernate-orm</artifactId>
-		</dependency>
-				<dependency>
-		    <groupId>io.quarkus</groupId>
-		    <artifactId>quarkus-hibernate-orm-panache</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>io.quarkus</groupId>
-		    <artifactId>quarkus-jdbc-postgresql</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.projectlombok</groupId>
-		    <artifactId>lombok</artifactId>
-		    <version>1.18.24</version>
-		    <scope>provided</scope>
-		</dependency>
-		<dependency>
-		  <groupId>org.kie</groupId>
-		  <artifactId>kie-dmn-core</artifactId>
-		  <version>${drools.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.kie</groupId>
-		  <artifactId>kie-ci</artifactId>
-		  <version>${drools.version}</version>
-		</dependency>
-		<dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.24</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-core</artifactId>
+      <version>${drools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-ci</artifactId>
+      <version>${drools.version}</version>
+    </dependency>
+    <dependency>
       <groupId>it.ssc</groupId>
       <artifactId>ssc</artifactId>
       <version>3.0.1r3</version>

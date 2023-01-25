@@ -2,9 +2,9 @@ package id.riseteknologi.pms.rules;
 
 unit TransactionUnit;
 
-import id.riseteknologi.pms.rule.model.Supplier
-import id.riseteknologi.pms.rule.model.Transaction
-import id.riseteknologi.pms.rule.model.TransactionResult
+import id.riseteknologi.pms.rule.model.Supplier;
+import id.riseteknologi.pms.rule.model.Transaction;
+import id.riseteknologi.pms.rule.model.TransactionResult;
 
 rule "transaction event"
 salience 50
@@ -21,7 +21,7 @@ when
 	/transaction
 	exists /suppliers[ stock > 0 ]
 then
-	transactionResult.setPossible(true)
+	transactionResult.setPossible(true);
 end
 
 

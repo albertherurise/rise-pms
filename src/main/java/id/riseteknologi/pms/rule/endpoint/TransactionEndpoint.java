@@ -40,6 +40,7 @@ public class TransactionEndpoint {
     transactionUnit.getSuppliers().add(transactionInput.getRise());
     transactionUnit.getSuppliers().add(transactionInput.getAlto());
     transactionUnit.getSuppliers().add(transactionInput.getSpi());
+    instance.fire();
     return transactionUnit.getTransactionResult();
   }
 }

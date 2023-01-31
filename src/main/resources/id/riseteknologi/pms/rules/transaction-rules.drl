@@ -6,6 +6,8 @@ import id.riseteknologi.pms.rule.model.Supplier;
 import id.riseteknologi.pms.rule.model.Transaction;
 import id.riseteknologi.pms.rule.model.TransactionResult;
 
+import java.math.BigDecimal;
+
 rule "transaction event"
 salience 50
 when
@@ -14,11 +16,9 @@ then
 	transactionResult.setProductId($transaction.getProductId());
 end
 
-
-rule "stock exists transaction is possible"
+rule "stock suppliers exist transaction is possible"
 salience 49
 when
-	/transaction
 	exists /suppliers[ stock > 0 ]
 then
 	transactionResult.setPossible(true);
@@ -26,9 +26,9 @@ end
 
 
 rule "all stock empty transaction is not possible"
-salience 40
+salience 48
 when
-	/transaction
+	$rise: /rise[ stock == 0 ]
 	not /suppliers[ stock > 0 ]
 then
 	transactionResult.setPossible(false);
@@ -38,61 +38,32 @@ end
 rule "use rise stock"
 salience 45
 when
-	/transaction
-	$rise: /suppliers[ name == "rise", stock > 0 ]
+	$rise: /rise[ stock > 0 ]
 then
 	transactionResult.setPossible(true);
 	transactionResult.setBuy(false);
+	System.out.println("Use rise stock");
 end
 
 	
-rule "rise stock empty buy from alto"
+rule "rise stock empty find cheapest price and available"
 salience 40
 when
-	/transaction
-	$rise: /suppliers[ name == "rise", stock == 0 ]
-	$alto: /suppliers[ name == "alto", stock > 0 ]
-	$spi: /suppliers[ name == "spi", stock > 0, price > $alto.price ]
+	$rise: /rise[ stock == 0 ]
+	$minimum: BigDecimal() from accumulate(
+				/suppliers[ $p : price, stock > 0 ],
+				min($p))
+	$supplier: /suppliers[ stock > 0, price == $minimum ]
 then
 	transactionResult.setBuy(true);
-	transactionResult.setSupplierId($alto.getId());
-end
-
-	
-rule "rise stock empty buy from spi"
-salience 40
-when
-	/transaction
-	$rise: /suppliers[ name == "rise", stock == 0 ]
-	$alto: /suppliers[ name == "alto", stock > 0 ]
-	$spi: /suppliers[ name == "spi", stock > 0, price < $alto.price ]
-then
-	transactionResult.setBuy(true);
-	transactionResult.setSupplierId($spi.getId());
+	transactionResult.setSupplierId($supplier.getId());
+	System.out.println("minimum " + $minimum);
+	System.out.println($supplier.getName() + " " + $supplier.getPrice());
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
 end
 
 
-rule "rise spi stock empty buy from alto"
-salience 40
-when
-	/transaction
-	$rise: /suppliers[ name == "rise", stock == 0 ]
-	$alto: /suppliers[ name == "alto", stock > 0 ]
-	$spi: /suppliers[ name == "spi", stock == 0 ]
-then
-	transactionResult.setBuy(true);
-	transactionResult.setSupplierId($alto.getId());
-end
 
-	
-rule "rise alto stock empty buy from spi"
-salience 40
-when
-	/transaction
-	$rise: /suppliers[ name == "rise", stock == 0 ]
-	$alto: /suppliers[ name == "alto", stock == 0 ]
-	$spi: /suppliers[ name == "spi", stock > 0 ]
-then
-	transactionResult.setBuy(true);
-	transactionResult.setSupplierId($spi.getId());
-end
+

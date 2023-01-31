@@ -5,102 +5,98 @@ unit PurchaseUnit;
 import id.riseteknologi.pms.rule.model.Product;
 import id.riseteknologi.pms.rule.model.Supplier;
 import id.riseteknologi.pms.rule.model.SupplierPriceChanged;
-import id.riseteknologi.pms.rule.model.PurchaseResult;
+import id.riseteknologi.pms.rule.model.PurchaseDecision;
+import java.math.BigDecimal;
+
+import function id.riseteknologi.pms.rules.PurchaseUnit.isLessThanPriceThreshold;
+import function id.riseteknologi.pms.rules.PurchaseUnit.isLessThan;
 
 rule "product watched"
 salience 200
 when
 	$product: /product
 then
-	purchaseResult.setProduct($product.getId);
+	System.out.println("PRODUCT FOUND");
+	purchaseDecision.setProductId($product.getId());
 end
 
-rule "rise stock empty, alto spi cheaper"
+rule "rise stock empty"
 salience 100
 when
-	$rise: /rise[ name == "rise", stock == 0 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice ] 
+	$rise: /rise[ stock == 0 ]
+	$supplier: /suppliers[ stock > 0, currentPrice < previousPrice, hasBeenProcessed == false ]
 then
-	buyFromBoth($alto, $spi);
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
+	eligibleSuppliers.add($supplier);
+	System.out.println("Rise stock empty, supplier found before " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($supplier.getCurrentPrice()));
+	System.out.println("Rise stock empty, supplier found " + maxEligiblePrice);
 end
 
-rule "rise stock empty, alto cheaper"
+rule "rise stock less than 100"
 salience 100
 when
-	$rise: /rise[ name == "rise", stock == 0 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice ]
-	$spi: /suppliers [ name == "spi", currentPrice > previousPrice ]
+	$rise: /rise[ stock > 0, stock < 100 ]
+	$supplier: /suppliers[ stock > 0, currentPrice < previousPrice, currentPrice < $rise.price, hasBeenProcessed == false ]
 then
-	buyFromOne($alto);
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
+	eligibleSuppliers.add($supplier);
+	System.out.println("Rise stock less than 100, supplier found before " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($supplier.getCurrentPrice()));
+	System.out.println("Rise stock less than 100, supplier found " + maxEligiblePrice);
 end
 
-rule "rise stock empty, spi cheaper"
+rule "rise stock 100 - 199"
 salience 100
 when
-	$rise: /rise[ name == "rise", stock == 0 ]
-	$alto: /suppliers [ name == "alto", currentPrice > previousPrice ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice ]
+	$rise: /rise[ stock >= 100, stock < 200 ]
+	$supplier: /suppliers[ stock > 0, currentPrice < previousPrice]
+	eval(isLessThanPriceThreshold($supplier.currentPrice, $rise.price, priceThreshold))
 then
-	buyFromOne($spi);
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
+	eligibleSuppliers.add($supplier);
+	System.out.println("Rise stock 100-199, supplier found before " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($supplier.getCurrentPrice()));
+	System.out.println("Rise stock 100-199, supplier found " + maxEligiblePrice);
 end
 
-rule "rise stock less than 100, alto spi cheaper"
-salience 90
+rule "price not less than previous but cheaper than maximum eligible supplier"
+salience 50
 when
-	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice < $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice < $rise.price ]
+	$supplier: /suppliers[ hasBeenProcessed == false ]
+	eval(isLessThan($supplier.currentPrice, maxEligiblePrice))
 then
-	buyFromBoth($alto, $spi);
+	System.out.println("Supplier current cheaper found, currentPrice: " + $supplier.getCurrentPrice());
+	System.out.println("Supplier current cheaper found, maxEligible Price: " + maxEligiblePrice);
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
+	eligibleSuppliers.add($supplier);
 end
 
-rule "rise stock less than 100, alto cheaper"
-salience 90
+rule "supplier product not eligible"
 when
-	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice < $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice > $rise.price ]
+	$supplier: /suppliers[ hasBeenProcessed == false ]
 then
-	buyFromOne($alto);
+	modify($supplier) {
+		setHasBeenProcessed(true);
+	}
+	System.out.println("Supplier not eligible found, maxEligible Price: " + maxEligiblePrice);
 end
 
-rule "rise stock less than 100, spi cheaper"
-salience 90
-when
-	$rise: /rise[ name == "rise", stock > 0, stock < 100 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice > $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice < $rise.price ]
-then
-	buyFromOne($spi);
-end
 
-rule "rise stock 100-200, alto spi cheaper"
-salience 80
-when
-	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice + 0.7 < $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice + 0.7 < $rise.price ]
-then
-	buyFromBoth($alto, $spi);
-end
 
-rule "rise stock 100-200, alto cheaper"
-salience 80
+rule "all suppliers eligibility have been determined"
+salience -1
 when
-	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice + 0.7 < $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice + 0.7 > $rise.price ]
+	not /suppliers[ hasBeenProcessed == false ]
 then
-	buyFromOne($alto);
-end
-
-rule "rise stock 100-200, spi cheaper"
-salience 80
-when
-	$rise: /rise[ name == "rise", stock > 0, stock >= 100, stock < 200 ]
-	$alto: /suppliers [ name == "alto", currentPrice < previousPrice, currentPrice + 0.7 > $rise.price ]
-	$spi: /suppliers [ name == "spi", currentPrice < previousPrice, currentPrice + 0.7 < $rise.price ]
-then
-	buyFromOne($spi);
+	System.out.println("All suppliers have been processed");
+	purchaseDecision.processEligibleSuppliers(eligibleSuppliers, maxBuy);
 end

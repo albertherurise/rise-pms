@@ -1,6 +1,6 @@
 package id.riseteknologi.pms.rule.model;
 
-import java.util.UUID;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Product {
+public class PurchaseInput {
 
-  private UUID id;
-
+  Product product;
+  Supplier rise;
+  List<SupplierPriceChanged> suppliers;
 }

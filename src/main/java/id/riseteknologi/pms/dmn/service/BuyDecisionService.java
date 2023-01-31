@@ -1,51 +1,49 @@
 package id.riseteknologi.pms.dmn.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.linear.LinearConstraint;
+import org.apache.commons.math3.optim.linear.LinearConstraintSet;
+import org.apache.commons.math3.optim.linear.LinearObjectiveFunction;
+import org.apache.commons.math3.optim.linear.Relationship;
+import org.apache.commons.math3.optim.linear.SimplexSolver;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import id.riseteknologi.pms.dmn.model.BuyDecision;
-import it.ssc.pl.milp.LP;
-import it.ssc.pl.milp.Solution;
-import it.ssc.pl.milp.SolutionType;
-import it.ssc.pl.milp.Variable;
-import it.ssc.ref.InputString;
 
 public class BuyDecisionService {
 
-  public static void main(String[] args) throws Exception {
-    // SolutionClass solution = solveLinearProgramming();
-    // System.out.println(solution);
+  public static void main(String[] args) {
+    solveBuyDecision(1000L, 1025L, 100L, 500L, 400L);
   }
 
-  public static BuyDecision solveBuyDecision(Long a1, Long a2, Long y1, Long y2, Long y3)
-      throws Exception {
-    String lp_string =
-        String.format(" %d   %d    min       .    \n" + "  1    0     le      %d    \n"
-            + "  0    1     le      %d    \n" + "  1    1     eq      %d", a1, a2, y1, y2, y3);
+  public static BuyDecision solveBuyDecision(Long a1, Long a2, Long y1, Long y2, Long y3) {
+    LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {a1, a2}, 0);
 
-    InputString lp_input = new InputString(lp_string);
-    lp_input.setInputFormat("X1:double, X2:double, TYPE:varstring(3), RHS:double");
+    Collection<LinearConstraint> constraints = new ArrayList<>();
+    constraints.add(new LinearConstraint(new double[] {1, 0}, Relationship.LEQ, y1));
+    constraints.add(new LinearConstraint(new double[] {0, 1}, Relationship.LEQ, y2));
+    constraints.add(new LinearConstraint(new double[] {1, 1}, Relationship.EQ, y3));
 
-    LP lp = new LP(lp_input);
-    SolutionType solution_type = lp.resolve();
+    constraints.add(new LinearConstraint(new double[] {1, 0}, Relationship.GEQ, 0));
+    constraints.add(new LinearConstraint(new double[] {0, 1}, Relationship.GEQ, 0));
 
-    BuyDecision buyDecision = new BuyDecision();
-
-    if (solution_type == SolutionType.OPTIMUM) {
-      Solution solution = lp.getSolution();
-
-      for (Variable var : solution.getVariables()) {
-        // SscLogger.log("Variable name :" + var.getName() + " value:" +
-        // var.getValue());
-        if (var.getName().equalsIgnoreCase("X1")) {
-          buyDecision.setAlto(Math.round(var.getValue()));
-        } else if (var.getName().equalsIgnoreCase("X2")) {
-          buyDecision.setSpi(Math.round(var.getValue()));
+    PointValuePair solution =
+        new SimplexSolver().optimize(f, new LinearConstraintSet(constraints), GoalType.MINIMIZE);
+    BuyDecision buyDecision = null;
+    if (solution != null) {
+      buyDecision = new BuyDecision();
+      for (int i = 0; i < 2; i++) {
+        if (i == 0) {
+          buyDecision.setAlto(Math.round(solution.getPoint()[i]));
+        } else {
+          buyDecision.setSpi(Math.round(solution.getPoint()[i]));
         }
       }
-      // SscLogger.log("o.f. value:" + solution.getOptimumValue());
       buyDecision.setTotalBought(buyDecision.getAlto() + buyDecision.getSpi());
-      buyDecision.setTotalNominal(Math.round(solution.getOptimumValue()));
-    } else {
-      // SscLogger.log("no optimal solution:" + solution_type);
+      buyDecision.setTotalNominal(Math.round(solution.getValue()));
     }
+    System.out.println(buyDecision);
     return buyDecision;
   }
 }

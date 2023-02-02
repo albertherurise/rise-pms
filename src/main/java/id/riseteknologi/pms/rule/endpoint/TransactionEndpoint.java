@@ -11,6 +11,7 @@ import id.riseteknologi.pms.rule.model.Supplier;
 import id.riseteknologi.pms.rule.model.TransactionInput;
 import id.riseteknologi.pms.rule.model.TransactionResult;
 import id.riseteknologi.pms.rules.TransactionUnit;
+import io.quarkus.logging.Log;
 
 @Path("transaction")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,7 +23,21 @@ public class TransactionEndpoint {
 
   private void createTransactionUnit() {
     transactionUnit = new TransactionUnit();
-    instance = RuleUnitProvider.get().createRuleUnitInstance(transactionUnit);
+    if (transactionUnit == null) {
+      Log.info("TRANSACTION UNIT NULL");
+    } else {
+      Log.info("TRANSACTION UNIT NOT NULL");
+    }
+    try {
+      instance = RuleUnitProvider.get().createRuleUnitInstance(transactionUnit);
+    } catch (Exception e) {
+      Log.info("THERE'S SEEMS TO BE A PROBLEM WHEN INITIALIZING INSTANCE");
+    }
+    if (instance == null) {
+      Log.info("INSTANCE NULL");
+    } else {
+      Log.info("INSTANCE NOT NULL");
+    }
   }
 
   @POST
@@ -30,6 +45,7 @@ public class TransactionEndpoint {
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("/")
   public TransactionResult processTransaction(TransactionInput transactionInput) {
+    Log.info(transactionInput);
     createTransactionUnit();
     transactionUnit.getTransaction().set(transactionInput.getTransaction());
     transactionUnit.getRise().set(transactionInput.getRise());

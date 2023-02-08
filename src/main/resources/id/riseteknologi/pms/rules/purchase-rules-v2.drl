@@ -1,0 +1,142 @@
+package id.riseteknologi.pms.rules;
+
+unit PurchaseUnitV2;
+
+import java.math.BigDecimal;
+
+import function id.riseteknologi.pms.rules.PurchaseUnitV2.isLessThanPriceThresholdV2;
+import function id.riseteknologi.pms.rules.PurchaseUnitV2.isLessThanV2;
+
+rule "product watched, v2"
+salience 200
+when
+	$product: /product
+then
+	System.out.println("PRODUCT FOUND");
+	purchaseDecision.setProductId($product.getId());
+end
+
+rule "rise stock empty, previous price exists, v2"
+salience 100
+when
+	$rise: /rise[ stock == 0 ]
+	$previousSupplier: /previousSuppliers[ $id: id, $previousPrice: price ]
+	$currentSupplier: /currentSuppliers[ id == $id, stock > 0, price < $previousPrice ]
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+	System.out.println("Rise stock empty, supplier found before " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($currentSupplier.getPrice()));
+	System.out.println("Rise stock empty, supplier found " + maxEligiblePrice);
+end
+
+rule "rise stock less than first stock threshold, previous price exists, v2"
+salience 100
+when
+	$rise: /rise[ stock > 0, stock < firstStockThreshold ]
+	$previousSupplier: /previousSuppliers[ $id: id, $previousPrice: price ]
+	$currentSupplier: /currentSuppliers[ id == $id, stock > 0, price < $previousPrice, price < $rise.price ]
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+	System.out.println("Rise stock less than first threshold, supplier found before " + maxEligiblePrice);
+	System.out.println("previous: " + $previousPrice + ", current: " + $currentSupplier.getPrice() + ", rise: " + $rise.getPrice());
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($currentSupplier.getPrice()));
+	System.out.println("Rise stock less than first threshold, supplier found " + maxEligiblePrice);
+end
+
+rule "rise stock between first stock and second stock threshold, previous price exists, v2"
+salience 100
+when
+	$rise: /rise[ stock >= firstStockThreshold, stock < secondStockThreshold ]
+	$previousSupplier: /previousSuppliers[ $id: id, $previousPrice: price ]
+	$currentSupplier: /currentSuppliers[ id == $id, stock > 0, price < $previousPrice]	
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+	eval(isLessThanPriceThresholdV2($currentSupplier.price, $rise.price, priceThreshold))
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+	System.out.println("Rise stock second threshold, supplier found before " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($currentSupplier.getPrice()));
+	System.out.println("Rise stock second threshold, supplier found " + maxEligiblePrice);
+end
+
+rule "rise stock less than first stock threshold, previous price doesn't exists, v2"
+salience 95
+when
+	$rise: /rise[ stock > 0, stock < firstStockThreshold ]
+	$currentSupplier: /currentSuppliers[ $id: id, stock > 0, price < $rise.price ]
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+	not /previousSuppliers[ id == $id ]
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+	System.out.println("Rise stock less than first threshold, supplier found before, no previous  " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($currentSupplier.getPrice()));
+	System.out.println("Rise stock less than first threshold, supplier found, no previous  " + maxEligiblePrice);
+end
+
+rule "rise stock between first stock and second stock threshold, previous price doesn't exists, v2"
+salience 95
+when
+	$rise: /rise[ stock >= firstStockThreshold, stock < secondStockThreshold ]
+	$currentSupplier: /currentSuppliers[ $id: id, stock > 0 ]	
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+	eval(isLessThanPriceThresholdV2($currentSupplier.price, $rise.price, priceThreshold))
+	not /previousSuppliers[ id == $id ]
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+	System.out.println("Rise stock second threshold, supplier found before, no previous  " + maxEligiblePrice);
+	maxEligiblePrice.setValue(maxEligiblePrice.getValue().max($currentSupplier.getPrice()));
+	System.out.println("Rise stock second threshold, supplier found, no previous  " + maxEligiblePrice);
+end
+
+rule "price not less than previous but cheaper than maximum eligible supplier, v2"
+salience 50
+when
+	$currentSupplier: /currentSuppliers[ $id: id, stock > 0 ]
+	$supplierChecker: /supplierCheckers[ id == $id, processed == false ]
+	eval(isLessThanV2($currentSupplier.price, maxEligiblePrice))
+then
+	System.out.println("Supplier current cheaper found, currentPrice: " + $currentSupplier.getPrice());
+	System.out.println("Supplier current cheaper found, maxEligible Price: " + maxEligiblePrice);
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	eligibleSuppliers.add($currentSupplier);
+end
+
+rule "supplier product not eligible"
+when
+	$supplierChecker: /supplierCheckers[ processed == false ]
+then
+	modify($supplierChecker) {
+		setProcessed(true);
+	}
+	System.out.println("Supplier not eligible found, maxEligible Price: " + maxEligiblePrice);
+	System.out.println("Supplier not eligible found, supplierId: " + $supplierChecker.getId());
+end
+
+
+
+rule "all suppliers eligibility have been determined"
+salience -1
+when
+	not /supplierCheckers[ processed == false ]
+then
+	System.out.println("All suppliers have been processed");
+	purchaseDecision.processEligibleSuppliersV2(eligibleSuppliers, maxBuy);
+end

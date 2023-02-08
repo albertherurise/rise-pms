@@ -1,4 +1,4 @@
-package id.riseteknologi.pms.rule.model;
+package id.riseteknologi.pms.rule.output.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,9 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class BuyDecision {
-
   private List<SupplierBuyDecision> supplierBuyDecisionList = new ArrayList<>();
   private Long totalBuyAmount;
   private BigDecimal totalBuyNominal;
-
 }

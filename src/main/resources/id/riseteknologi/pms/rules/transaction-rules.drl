@@ -2,9 +2,9 @@ package id.riseteknologi.pms.rules;
 
 unit TransactionUnit;
 
-import id.riseteknologi.pms.rule.model.Supplier;
-import id.riseteknologi.pms.rule.model.Transaction;
-import id.riseteknologi.pms.rule.model.TransactionResult;
+import id.riseteknologi.pms.rule.input.model.Supplier;
+import id.riseteknologi.pms.rule.input.model.Transaction;
+import id.riseteknologi.pms.rule.output.model.TransactionDecision;
 
 import java.math.BigDecimal;
 
@@ -13,7 +13,7 @@ salience 50
 when
 	$transaction: /transaction
 then
-	transactionResult.setProductId($transaction.getProductId());
+	transactionDecision.setProductId($transaction.getProductId());
 end
 
 rule "stock suppliers exist transaction is possible"
@@ -21,7 +21,7 @@ salience 49
 when
 	exists /suppliers[ stock > 0 ]
 then
-	transactionResult.setPossible(true);
+	transactionDecision.setPossible(true);
 end
 
 
@@ -31,7 +31,7 @@ when
 	$rise: /rise[ stock == 0 ]
 	not /suppliers[ stock > 0 ]
 then
-	transactionResult.setPossible(false);
+	transactionDecision.setPossible(false);
 end
 
 
@@ -40,8 +40,8 @@ salience 45
 when
 	$rise: /rise[ stock > 0 ]
 then
-	transactionResult.setPossible(true);
-	transactionResult.setBuy(false);
+	transactionDecision.setPossible(true);
+	transactionDecision.setBuy(false);
 	System.out.println("Use rise stock");
 end
 
@@ -55,15 +55,8 @@ when
 				min($p))
 	$supplier: /suppliers[ stock > 0, price == $minimum ]
 then
-	transactionResult.setBuy(true);
-	transactionResult.setSupplierId($supplier.getId());
+	transactionDecision.setBuy(true);
+	transactionDecision.setSupplierId($supplier.getId());
 	System.out.println("minimum " + $minimum);
 	System.out.println($supplier.getName() + " " + $supplier.getPrice());
-	modify($supplier) {
-		setHasBeenProcessed(true);
-	}
 end
-
-
-
-

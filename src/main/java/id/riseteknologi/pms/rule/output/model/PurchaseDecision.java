@@ -1,9 +1,12 @@
-package id.riseteknologi.pms.rule.model;
+package id.riseteknologi.pms.rule.output.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import id.riseteknologi.pms.rule.input.model.Supplier;
+import id.riseteknologi.pms.rule.input.model.SupplierPriceChanged;
 import id.riseteknologi.pms.rule.service.RuleService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,4 +36,14 @@ public class PurchaseDecision {
     }
   }
 
+  public void processEligibleSuppliersV2(Set<Supplier> eligibleSuppliers, Long maxBuy) {
+    List<Supplier> suppliers = new ArrayList<>(eligibleSuppliers);
+    BuyDecision buyDecision = RuleService.solveBuyDecision(suppliers, maxBuy);
+    if (buyDecision == null) {
+      setBuy(false);
+    } else {
+      setBuy(true);
+      setBuyDecision(buyDecision);
+    }
+  }
 }

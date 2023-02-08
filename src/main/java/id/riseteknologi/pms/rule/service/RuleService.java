@@ -12,9 +12,9 @@ import org.apache.commons.math3.optim.linear.LinearObjectiveFunction;
 import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import id.riseteknologi.pms.rule.model.BuyDecision;
-import id.riseteknologi.pms.rule.model.Supplier;
-import id.riseteknologi.pms.rule.model.SupplierBuyDecision;
+import id.riseteknologi.pms.rule.input.model.Supplier;
+import id.riseteknologi.pms.rule.output.model.BuyDecision;
+import id.riseteknologi.pms.rule.output.model.SupplierBuyDecision;
 
 public class RuleService {
 

@@ -1,4 +1,4 @@
-package id.riseteknologi.pms.rule.model;
+package id.riseteknologi.pms.rule.input.model;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -20,6 +20,5 @@ public class SupplierPriceChanged {
   private BigDecimal previousPrice;
   private BigDecimal currentPrice;
   private Long stock;
-  private Boolean hasBeenProcessed = false;
 
 }

@@ -1,4 +1,4 @@
-package id.riseteknologi.pms.rule.model;
+package id.riseteknologi.pms.event;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -12,9 +12,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SupplierBuyDecision {
+public class TransactionEvent {
 
-  private UUID supplierId;
-  private Long buyAmount;
-
+  private UUID clientId;
+  private UUID customerId;
+  private UUID productId;
+  // private LocalDateTime transactionTime;
 }

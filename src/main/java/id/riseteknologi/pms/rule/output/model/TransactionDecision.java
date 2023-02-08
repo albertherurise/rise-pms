@@ -1,4 +1,4 @@
-package id.riseteknologi.pms.rule.model;
+package id.riseteknologi.pms.rule.output.model;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -10,11 +10,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionResult {
-
+public class TransactionDecision {
   private UUID productId;
   private Boolean possible;
   private Boolean buy;
   private UUID supplierId;
-
 }

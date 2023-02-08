@@ -4,31 +4,32 @@ import org.drools.ruleunits.api.DataSource;
 import org.drools.ruleunits.api.DataStore;
 import org.drools.ruleunits.api.RuleUnitData;
 import org.drools.ruleunits.api.SingletonStore;
-import id.riseteknologi.pms.rule.model.Supplier;
-import id.riseteknologi.pms.rule.model.Transaction;
-import id.riseteknologi.pms.rule.model.TransactionResult;
+import id.riseteknologi.pms.rule.input.model.Supplier;
+import id.riseteknologi.pms.rule.input.model.SupplierRise;
+import id.riseteknologi.pms.rule.input.model.Transaction;
+import id.riseteknologi.pms.rule.output.model.TransactionDecision;
 
 public class TransactionUnit implements RuleUnitData {
 
   private SingletonStore<Transaction> transaction;
-  private SingletonStore<Supplier> rise;
+  private SingletonStore<SupplierRise> rise;
   private DataStore<Supplier> suppliers;
-  private TransactionResult transactionResult;
+  private TransactionDecision transactionDecision;
 
   public TransactionUnit() {
     this(DataSource.createSingleton(), DataSource.createSingleton(), DataSource.createStore(),
-        new TransactionResult());
+        new TransactionDecision());
   }
 
-  public TransactionUnit(SingletonStore<Transaction> transaction, SingletonStore<Supplier> rise,
-      DataStore<Supplier> suppliers, TransactionResult transactionResult) {
+  public TransactionUnit(SingletonStore<Transaction> transaction, SingletonStore<SupplierRise> rise,
+      DataStore<Supplier> suppliers, TransactionDecision transactionDecision) {
     this.transaction = transaction;
     this.rise = rise;
     this.suppliers = suppliers;
-    this.transactionResult = transactionResult;
+    this.transactionDecision = transactionDecision;
   }
 
-  public SingletonStore<Supplier> getRise() {
+  public SingletonStore<SupplierRise> getRise() {
     return rise;
   }
 
@@ -40,17 +41,17 @@ public class TransactionUnit implements RuleUnitData {
     return transaction;
   }
 
-  public TransactionResult getTransactionResult() {
-    return transactionResult;
+  public TransactionDecision getTransactionDecision() {
+    return transactionDecision;
   }
 
   public void resetTransactionUnit() {
     this.transaction.clear();
     this.suppliers = DataSource.createStore();
-    this.transactionResult = new TransactionResult();
+    this.transactionDecision = new TransactionDecision();
   }
 
-  public void setRise(SingletonStore<Supplier> rise) {
+  public void setRise(SingletonStore<SupplierRise> rise) {
     this.rise = rise;
   }
 
@@ -62,9 +63,8 @@ public class TransactionUnit implements RuleUnitData {
     this.transaction = transaction;
   }
 
-  public void setTransactionResult(TransactionResult transactionResult) {
-    this.transactionResult = transactionResult;
+  public void setTransactionDecision(TransactionDecision transactionDecision) {
+    this.transactionDecision = transactionDecision;
   }
-
 
 }

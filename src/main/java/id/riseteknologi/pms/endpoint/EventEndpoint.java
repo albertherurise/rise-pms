@@ -22,8 +22,10 @@ import id.riseteknologi.pms.event.TransactionEvent;
 import id.riseteknologi.pms.mapper.WarehouseMapper;
 import id.riseteknologi.pms.model.Supplier;
 import id.riseteknologi.pms.model.Warehouse;
+import id.riseteknologi.pms.model.Whitelist;
 import id.riseteknologi.pms.repository.SupplierRepository;
 import id.riseteknologi.pms.repository.WarehouseRepository;
+import id.riseteknologi.pms.repository.WhitelistRepository;
 import id.riseteknologi.pms.rule.input.model.Product;
 import id.riseteknologi.pms.rule.input.model.SupplierChecker;
 import id.riseteknologi.pms.rule.input.model.SupplierRise;
@@ -43,6 +45,9 @@ public class EventEndpoint {
 
   @Inject
   SupplierRepository supplierRepository;
+
+  @Inject
+  WhitelistRepository whitelistRepository;
 
   @Inject
   WarehouseMapper warehouseMapper;
@@ -66,6 +71,7 @@ public class EventEndpoint {
     try {
       purchaseUnitV2Instance = RuleUnitProvider.get().createRuleUnitInstance(purchaseUnitV2);
     } catch (Exception e) {
+      Log.error("CANNOT CREATE PURCHASE UNIT V2");
       if (purchaseUnitV2Instance == null) {
         Log.info("PURCHASE UNIT V2 INSTANCE NULL");
       }
@@ -82,6 +88,7 @@ public class EventEndpoint {
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("purchase")
   public PurchaseDecision decidePurchaseEvent(PurchaseEvent purchaseEvent) {
+    Log.info(purchaseEvent);
     createPurchaseUnit();
     Product product = new Product(purchaseEvent.getProductId());
     purchaseUnit.getProduct().set(product);
@@ -107,23 +114,33 @@ public class EventEndpoint {
     Log.info("RISE PRICE: " + supplierRise.getPrice());
     Log.info("RISE STOCK: " + supplierRise.getStock());
 
-    List<WarehouseDTO> previousWarehouses = purchaseEvent.getPreviousWarehouses();
-    if (previousWarehouses == null) {
-      previousWarehouses = new ArrayList<>();
+    List<WarehouseDTO> currentWarehouses = purchaseEvent.getCurrentWarehouses();
+    Log.info(currentWarehouses);
+    if (currentWarehouses == null) {
+      currentWarehouses = new ArrayList<>();
     }
-    Map<UUID, WarehouseDTO> previousWarehousesMap = new HashMap<>();
-    for (WarehouseDTO warehouseDTO : previousWarehouses) {
-      previousWarehousesMap.put(warehouseDTO.getSupplierId(), warehouseDTO);
+    Map<UUID, WarehouseDTO> currentWarehousesMap = new HashMap<>();
+    for (WarehouseDTO warehouseDTO : currentWarehouses) {
+      currentWarehousesMap.put(warehouseDTO.getSupplierId(), warehouseDTO);
     }
-
+    Map<UUID, Boolean> supplierAdded = new HashMap<>();
     List<Supplier> suppliers = supplierRepository.getAllExceptRise();
     for (Supplier supplier : suppliers) {
       List<Warehouse> warehouses =
           warehouseRepository.getWarehouseBySupplierProductId(supplier.getId(), product.getId());
       for (Warehouse warehouse : warehouses) {
-        purchaseUnit.getSuppliers().add(warehouseMapper.toSupplierPriceChanged(warehouse,
-            previousWarehousesMap.get(supplier.getId())));
-        purchaseUnit.getSupplierCheckers().add(new SupplierChecker(supplier.getId()));
+        purchaseUnit.getSuppliers().add(warehouseMapper.toSupplierPriceChangedFromPrevious(
+            warehouse, currentWarehousesMap.get(supplier.getId())));
+        purchaseUnit.getSupplierCheckers()
+            .add(new SupplierChecker(warehouse.getSupplier().getId()));
+        supplierAdded.put(supplier.getId(), true);
+      }
+    }
+    for (WarehouseDTO warehouseDTO : currentWarehouses) {
+      if (!supplierAdded.containsKey(warehouseDTO.getSupplierId())) {
+        purchaseUnit.getSuppliers()
+            .add(warehouseMapper.toSupplierPriceChangedFromCurrent(warehouseDTO));
+        purchaseUnit.getSupplierCheckers().add(new SupplierChecker(warehouseDTO.getSupplierId()));
       }
     }
 
@@ -131,7 +148,6 @@ public class EventEndpoint {
     return purchaseUnit.getPurchaseDecision();
   }
 
-  // If day changed or maybe every several hours check supplier
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
@@ -159,26 +175,36 @@ public class EventEndpoint {
     purchaseUnitV2.getRise().set(supplierRise);
 
     List<Supplier> suppliers = supplierRepository.getAllExceptRise();
-    List<id.riseteknologi.pms.rule.input.model.Supplier> currentSuppliers = new ArrayList<>();
+    List<id.riseteknologi.pms.rule.input.model.Supplier> previousSuppliers = new ArrayList<>();
     for (Supplier supplier : suppliers) {
       List<Warehouse> warehouses =
           warehouseRepository.getWarehouseBySupplierProductId(supplier.getId(), product.getId());
       for (Warehouse warehouse : warehouses) {
-        currentSuppliers.add(warehouseMapper.toSupplierInput(warehouse));
+        previousSuppliers.add(warehouseMapper.toSupplierInput(warehouse));
       }
     }
 
-    List<id.riseteknologi.pms.rule.input.model.Supplier> previousSuppliers = null;
-    List<WarehouseDTO> previousWarehouses = purchaseEvent.getPreviousWarehouses();
-    if (previousWarehouses == null || previousWarehouses.isEmpty()) {
-      previousSuppliers = new ArrayList<>(currentSuppliers);
+    List<id.riseteknologi.pms.rule.input.model.Supplier> currentSuppliers = null;
+    List<WarehouseDTO> currentWarehouses = purchaseEvent.getCurrentWarehouses();
+    if (currentWarehouses == null || currentWarehouses.isEmpty()) {
+      currentSuppliers = new ArrayList<>(previousSuppliers);
     } else {
-      previousSuppliers = previousWarehouses.stream().map(w -> warehouseMapper.toSupplierInput(w))
+      currentSuppliers = currentWarehouses.stream().map(w -> warehouseMapper.toSupplierInput(w))
           .collect(Collectors.toList());
+      Map<UUID, id.riseteknologi.pms.rule.input.model.Supplier> checkCurrentSuppliers =
+          new HashMap<>();
+      for (id.riseteknologi.pms.rule.input.model.Supplier supplier : currentSuppliers) {
+        checkCurrentSuppliers.put(supplier.getId(), supplier);
+      }
+      for (id.riseteknologi.pms.rule.input.model.Supplier supplier : previousSuppliers) {
+        if (checkCurrentSuppliers.get(supplier.getId()) == null) {
+          currentSuppliers.add(supplier);
+        }
+      }
     }
 
-    Log.info(previousWarehouses);
-    Log.info(previousSuppliers);
+    Log.info(currentWarehouses);
+    Log.info(currentSuppliers);
     for (id.riseteknologi.pms.rule.input.model.Supplier supplier : previousSuppliers) {
       purchaseUnitV2.getPreviousSuppliers().add(supplier);
     }
@@ -197,6 +223,17 @@ public class EventEndpoint {
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("transaction")
   public TransactionDecision decideTransactionEvent(TransactionEvent transactionEvent) {
+    // Starting blacklist
+    // TODO blacklist
+
+    // Starting whitelist
+    TransactionDecision transactionDecision =
+        processWhitelist(transactionEvent.getClientId(), transactionEvent.getProductId());
+    if (transactionDecision != null) {
+      return transactionDecision;
+    }
+
+    // Starting rule engine
     createTransactionUnit();
     Transaction transaction = new Transaction(transactionEvent.getProductId());
     transactionUnit.getTransaction().set(transaction);
@@ -219,5 +256,23 @@ public class EventEndpoint {
 
     transactionUnitInstance.fire();
     return transactionUnit.getTransactionDecision();
+  }
+
+  private TransactionDecision processWhitelist(UUID clientId, UUID productId) {
+    List<Whitelist> whitelists =
+        whitelistRepository.getWhitelistByClientProduct(clientId, productId);
+    if (whitelists == null || whitelists.isEmpty()) {
+      return null;
+    }
+    for (Whitelist whitelist : whitelists) {
+      List<Warehouse> warehouses = warehouseRepository
+          .getWarehouseBySupplierProductId(whitelist.getSupplier().getId(), productId);
+      for (Warehouse warehouse : warehouses) {
+        if (warehouse.getStock() > 0) {
+          return new TransactionDecision(productId, true, true, warehouse.getSupplier().getId());
+        }
+      }
+    }
+    return null;
   }
 }

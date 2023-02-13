@@ -1,6 +1,5 @@
 package id.riseteknologi.pms.mapper;
 
-import java.math.BigDecimal;
 import javax.enterprise.context.ApplicationScoped;
 import id.riseteknologi.pms.dto.WarehouseDTO;
 import id.riseteknologi.pms.model.Warehouse;
@@ -20,15 +19,22 @@ public class WarehouseMapper {
         warehouseDTO.getPrice(), warehouseDTO.getStock());
   }
 
-  public SupplierPriceChanged toSupplierPriceChanged(Warehouse currentWarehouse,
-      WarehouseDTO previousWarehouse) {
-    BigDecimal previousPrice = currentWarehouse.getPrice();
-    if (previousWarehouse != null) {
-      previousPrice = previousWarehouse.getPrice();
+  public SupplierPriceChanged toSupplierPriceChangedFromCurrent(WarehouseDTO currentWarehouse) {
+    return new SupplierPriceChanged(currentWarehouse.getSupplierId(),
+        currentWarehouse.getSupplierName(), currentWarehouse.getPrice(),
+        currentWarehouse.getPrice(), currentWarehouse.getStock());
+  }
+
+  public SupplierPriceChanged toSupplierPriceChangedFromPrevious(Warehouse previousWarehouse,
+      WarehouseDTO currentWarehouse) {
+    if (currentWarehouse != null) {
+      return new SupplierPriceChanged(currentWarehouse.getSupplierId(),
+          currentWarehouse.getSupplierName(), previousWarehouse.getPrice(),
+          currentWarehouse.getPrice(), currentWarehouse.getStock());
     }
-    return new SupplierPriceChanged(currentWarehouse.getSupplier().getId(),
-        currentWarehouse.getSupplier().getName(), previousPrice, currentWarehouse.getPrice(),
-        currentWarehouse.getStock());
+    return new SupplierPriceChanged(previousWarehouse.getSupplier().getId(),
+        previousWarehouse.getSupplier().getName(), previousWarehouse.getPrice(),
+        previousWarehouse.getPrice(), previousWarehouse.getStock());
   }
 
   public WarehouseDTO toWarehouseDTO(Warehouse warehouse) {

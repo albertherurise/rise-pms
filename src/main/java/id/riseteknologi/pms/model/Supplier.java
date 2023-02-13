@@ -22,6 +22,9 @@ public class Supplier extends BaseEntity {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
   private List<Warehouse> productWithStockList;
 
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
+  private List<Whitelist> whitelist;
+
   public Supplier(UUID id, String name) {
     super(id);
     this.name = name;

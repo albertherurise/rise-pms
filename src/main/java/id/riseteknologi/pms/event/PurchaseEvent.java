@@ -16,5 +16,5 @@ import lombok.ToString;
 @ToString
 public class PurchaseEvent {
   private UUID productId;
-  List<WarehouseDTO> previousWarehouses;
+  List<WarehouseDTO> currentWarehouses;
 }

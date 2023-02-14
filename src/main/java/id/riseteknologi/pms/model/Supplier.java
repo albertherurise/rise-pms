@@ -22,7 +22,7 @@ public class Supplier extends BaseEntity {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
   private List<Warehouse> productWithStockList;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
   private List<Whitelist> whitelist;
 
   public Supplier(UUID id, String name) {

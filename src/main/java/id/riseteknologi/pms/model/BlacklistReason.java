@@ -5,30 +5,30 @@ import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends BaseEntity {
+@ToString(callSuper = true)
+@Table(name = "blacklist_reason")
+public class BlacklistReason extends BaseEntity {
 
-  private String name;
-  private String phone;
-  private String domicile;
+  private String description;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
-  private List<Blacklist> blacklists;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "blacklistReason")
+  List<Blacklist> blacklists;
 
-  public Customer(UUID id, String name, String phone, String domicile) {
+  public BlacklistReason(UUID id, String description) {
     super(id);
-    this.name = name;
-    this.phone = phone;
-    this.domicile = domicile;
+    this.description = description;
   }
 
 }

@@ -23,6 +23,7 @@ import id.riseteknologi.pms.mapper.WarehouseMapper;
 import id.riseteknologi.pms.model.Supplier;
 import id.riseteknologi.pms.model.Warehouse;
 import id.riseteknologi.pms.model.Whitelist;
+import id.riseteknologi.pms.repository.BlacklistRepository;
 import id.riseteknologi.pms.repository.SupplierRepository;
 import id.riseteknologi.pms.repository.WarehouseRepository;
 import id.riseteknologi.pms.repository.WhitelistRepository;
@@ -48,6 +49,9 @@ public class EventEndpoint {
 
   @Inject
   WhitelistRepository whitelistRepository;
+
+  @Inject
+  BlacklistRepository blacklistRepository;
 
   @Inject
   WarehouseMapper warehouseMapper;
@@ -224,13 +228,17 @@ public class EventEndpoint {
   @Path("transaction")
   public TransactionDecision decideTransactionEvent(TransactionEvent transactionEvent) {
     // Starting blacklist
-    // TODO blacklist
+    TransactionDecision transactionDecisionBlacklist =
+        processBlacklist(transactionEvent.getCustomerId(), transactionEvent.getProductId());
+    if (transactionDecisionBlacklist != null) {
+      return transactionDecisionBlacklist;
+    }
 
     // Starting whitelist
-    TransactionDecision transactionDecision =
+    TransactionDecision transactionDecisionWhitelist =
         processWhitelist(transactionEvent.getClientId(), transactionEvent.getProductId());
-    if (transactionDecision != null) {
-      return transactionDecision;
+    if (transactionDecisionWhitelist != null) {
+      return transactionDecisionWhitelist;
     }
 
     // Starting rule engine
@@ -258,6 +266,14 @@ public class EventEndpoint {
     return transactionUnit.getTransactionDecision();
   }
 
+  private TransactionDecision processBlacklist(UUID customerId, UUID productId) {
+    if (blacklistRepository.isBlacklisted(customerId)) {
+      Log.info(customerId + " blacklisted");
+      return new TransactionDecision(productId, false, false, null);
+    }
+    return null;
+  }
+
   private TransactionDecision processWhitelist(UUID clientId, UUID productId) {
     List<Whitelist> whitelists =
         whitelistRepository.getWhitelistByClientProduct(clientId, productId);
@@ -269,6 +285,7 @@ public class EventEndpoint {
           .getWarehouseBySupplierProductId(whitelist.getSupplier().getId(), productId);
       for (Warehouse warehouse : warehouses) {
         if (warehouse.getStock() > 0) {
+          Log.info(clientId + " " + productId + " whitelisted");
           return new TransactionDecision(productId, true, true, warehouse.getSupplier().getId());
         }
       }

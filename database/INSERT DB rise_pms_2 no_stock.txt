@@ -1,0 +1,56 @@
+INSERT INTO supplier(id, name) VALUES
+('de848139-a8d6-4a8d-b3be-192a48b31528','rise'),
+('09378fba-ec22-4d37-8eb6-b9a97153fa19','alto'),
+('a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9','spi'),
+('282c3650-09fa-4b53-b460-d497f2bc4fdb','albert');
+
+
+INSERT INTO product(id, code, name, description) VALUES
+('73000bb4-873c-4d7d-bb8d-91b0d6535615','P001','INET5GB','Internet 5GB 1 bulan'),
+('84d80f61-3a1e-4035-b1e8-e02c5164c3f9','P002','TELP30MNT','Telepon 30 menit'),
+('6d05477b-7880-4efa-9a11-3412e0e9c5f6','P003','SMS500','SMS 500 pesan');
+
+
+INSERT INTO client(id, name) VALUES
+('1254b4cf-92bc-4b54-a83b-908d0b4c28c0','Warung A'),
+('2916653e-e646-4109-9ed6-abfc5bcf2331','Warung B');
+
+
+INSERT INTO customer(id, name, phone, domicile) VALUES
+('cf7278b3-5a99-464c-97c8-54988ac31976','Toshiro Heru','081234567890','Semarang'),
+('c16f0889-6b3e-4d29-a46f-6c1971d15815','Arif Buana','081987654321','Jakarta');
+
+
+INSERT INTO warehouse(id, supplier_id, product_id, price) VALUES
+('67fc26a3-0bfd-4018-860c-6572aab9b427','09378fba-ec22-4d37-8eb6-b9a97153fa19','73000bb4-873c-4d7d-bb8d-91b0d6535615',1005),
+('968f9b3e-b174-4172-bff3-7293d4574394','09378fba-ec22-4d37-8eb6-b9a97153fa19','84d80f61-3a1e-4035-b1e8-e02c5164c3f9',940),
+('e836f4d3-8c63-4f9a-a0e4-08968c833290','09378fba-ec22-4d37-8eb6-b9a97153fa19','6d05477b-7880-4efa-9a11-3412e0e9c5f6',1400),
+('676b9608-9e93-400f-aed5-fb867c0a6e20','a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9','73000bb4-873c-4d7d-bb8d-91b0d6535615',995),
+('eaef5b3e-9cdb-44a4-8140-9aa8dcf6b689','a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9','84d80f61-3a1e-4035-b1e8-e02c5164c3f9',945),
+('1b3180a5-1ff8-47fe-8899-cc3014ba0460','a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9','6d05477b-7880-4efa-9a11-3412e0e9c5f6',2000),
+('821c66fa-9a4b-4e85-8d4d-3f33eeec6bbe','282c3650-09fa-4b53-b460-d497f2bc4fdb','73000bb4-873c-4d7d-bb8d-91b0d6535615',1050),
+('26ffec7e-3c5a-461b-aed6-57636f6caaae','282c3650-09fa-4b53-b460-d497f2bc4fdb','84d80f61-3a1e-4035-b1e8-e02c5164c3f9',1000);
+
+
+INSERT INTO rise_warehouse(id, supplier_id, product_id, price, stock) VALUES
+('346ddea4-da1c-4386-a2ac-870dafc52ec5','de848139-a8d6-4a8d-b3be-192a48b31528','73000bb4-873c-4d7d-bb8d-91b0d6535615',1000,0),
+('b693271f-6232-4ddd-af07-e499eed678a3','de848139-a8d6-4a8d-b3be-192a48b31528','84d80f61-3a1e-4035-b1e8-e02c5164c3f9',900,40),
+('4128a268-cdc2-44d8-88aa-0403ca9e4436','de848139-a8d6-4a8d-b3be-192a48b31528','84d80f61-3a1e-4035-b1e8-e02c5164c3f9',1000,40),
+('480d85f0-9f7f-43e6-b695-fde0e26ae39d','de848139-a8d6-4a8d-b3be-192a48b31528','6d05477b-7880-4efa-9a11-3412e0e9c5f6',2100,100),
+('1673e15d-cca2-43d0-a3d6-272cd3750f94','de848139-a8d6-4a8d-b3be-192a48b31528','6d05477b-7880-4efa-9a11-3412e0e9c5f6',2200,50);
+
+
+INSERT INTO whitelist(id, client_id, product_id, supplier_id) VALUES
+('dd554b4d-c894-4c65-bb34-1755b037c537','2916653e-e646-4109-9ed6-abfc5bcf2331','73000bb4-873c-4d7d-bb8d-91b0d6535615','282c3650-09fa-4b53-b460-d497f2bc4fdb'),
+('8a7b88f8-69d8-434e-a0f3-e577c1a5b544','2916653e-e646-4109-9ed6-abfc5bcf2331','84d80f61-3a1e-4035-b1e8-e02c5164c3f9','a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9'),
+('e0e02a1e-880a-4042-986d-466082b54519','2916653e-e646-4109-9ed6-abfc5bcf2331','6d05477b-7880-4efa-9a11-3412e0e9c5f6','09378fba-ec22-4d37-8eb6-b9a97153fa19');
+
+
+INSERT INTO blacklist_reason(id, description) VALUES
+('9c404234-b841-4abd-bbed-afed247ee885','Fraud'),
+('465afe5d-62ed-4b51-99f4-7bd9192057f9','Repeated Policy Violation');
+
+
+INSERT INTO blacklist(id, customer_id, blacklist_reason_id) VALUES
+('223f17d5-317e-41ca-a908-8926afd188c4','c16f0889-6b3e-4d29-a46f-6c1971d15815','9c404234-b841-4abd-bbed-afed247ee885'),
+('d9649e97-98d5-4836-b5e3-56eb2bb3813b','c16f0889-6b3e-4d29-a46f-6c1971d15815','465afe5d-62ed-4b51-99f4-7bd9192057f9');

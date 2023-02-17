@@ -1,0 +1,564 @@
+http://localhost:8082/event/purchase
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1015
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 1000
+        },
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1000
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1005
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 995
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1050
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": false,
+    "eligibleSuppliers": null
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1005
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 980
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 980
+        },
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1000
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1005
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 980
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 980
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 980
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 980
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 1000
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 990
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 990
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 1000
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1005
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 990
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1060
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 990
+        }
+    ]
+}
+
+Input (DB rise(stock = 0, price = 1000), price -> alto: 1005, spi: 995, albert:1050):
+{
+	"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1000
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 990
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+            "price": 1045
+        }
+    ]
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 990
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 1000
+        },
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1045
+        }
+    ]
+}
+
+Input (DB rise(stock = 80, price = 950), price -> alto:940, spi:945, albert:1000):
+{
+	"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 930
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 940
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 1100
+        }
+    ]
+}
+Result:
+{
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 930
+        },
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 940
+        }
+    ]
+}
+
+Input(DB rise(stock = 80, price = 950), price -> alto:940(stock=0), spi:945, albert:1000):
+{
+	"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 930
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 925
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 999
+        }
+    ]
+}
+Result:
+{
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 925
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 930
+        }
+    ]
+}
+
+Input(DB rise(stock = 80, price = 950), price -> alto:940(stock=0), spi:945, albert:1000):
+{
+	"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 930
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 920
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+            "price": 945
+        }
+    ]
+}
+Result:
+{
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 920
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 930
+        },
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 945
+        }
+    ]
+}
+
+Input(DB rise(stock = 150, price = 2133.33), price -> alto:1400(stock=90), spi:2000(stock=130):
+{
+	"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 950
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 950
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1100
+        }
+    ]
+}
+Result:
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 950
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 950
+        },
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1100
+        }
+    ]
+}
+
+Input(DB rise(stock = 150, price = 2133.33), price -> alto:1400(stock=90), spi:2000(stock=130):
+{
+	"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1410
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1995
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1100
+        }
+    ]
+}
+Result:
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1100
+        }
+    ]
+}
+
+Input(DB rise(stock = 150, price = 2133.33), price -> alto:1400(stock=90), spi:2000(stock=130):
+{
+	"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+	"currentWarehouses": [
+        {
+            "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "supplierName": "alto",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1399
+        },
+        {
+            "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "supplierName": "spi",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1300
+        },
+        {
+            "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "supplierName": "albert",
+			"productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+            "price": 1100
+        }
+    ]
+}
+Result:
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "buy": true,
+    "eligibleSuppliers": [
+        {
+            "id": "282c3650-09fa-4b53-b460-d497f2bc4fdb",
+            "name": "albert",
+            "price": 1100
+        },
+        {
+            "id": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9",
+            "name": "spi",
+            "price": 1300
+        },
+        {
+            "id": "09378fba-ec22-4d37-8eb6-b9a97153fa19",
+            "name": "alto",
+            "price": 1399
+        }
+    ]
+}

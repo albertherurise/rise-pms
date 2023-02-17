@@ -1,0 +1,112 @@
+http://localhost:8082/event/transaction
+Input:
+{
+    "clientId": "1254b4cf-92bc-4b54-a83b-908d0b4c28c0",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615"
+}
+Result:
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "reject": false,
+    "buy": true,
+    "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9"
+}
+
+Input:
+{
+    "clientId": "1254b4cf-92bc-4b54-a83b-908d0b4c28c0",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9"
+}
+Result:
+{
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+    "reject": false,
+    "buy": false,
+    "supplierId": null
+}
+
+Input:
+{
+    "clientId": "1254b4cf-92bc-4b54-a83b-908d0b4c28c0",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6"
+}
+Result:
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "reject": false,
+    "buy": false,
+    "supplierId": null
+}
+
+Input:
+{
+    "clientId": "2916653e-e646-4109-9ed6-abfc5bcf2331",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9"
+}
+Result (whitelist):
+{
+    "productId": "84d80f61-3a1e-4035-b1e8-e02c5164c3f9",
+    "reject": false,
+    "buy": true,
+    "supplierId": "a5aba33a-d819-4f3a-9bbf-9ca5c799c5d9"
+}
+
+Input:
+{
+    "clientId": "2916653e-e646-4109-9ed6-abfc5bcf2331",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615"
+}
+Result (whitelist):
+{
+    "productId": "73000bb4-873c-4d7d-bb8d-91b0d6535615",
+    "reject": false,
+    "buy": true,
+    "supplierId": "282c3650-09fa-4b53-b460-d497f2bc4fdb"
+}
+
+Input:
+{
+    "clientId": "2916653e-e646-4109-9ed6-abfc5bcf2331",
+    "customerId": "cf7278b3-5a99-464c-97c8-54988ac31976",
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6"
+}
+Result (whitelist):
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "reject": false,
+    "buy": true,
+    "supplierId": "09378fba-ec22-4d37-8eb6-b9a97153fa19"
+}
+
+Input:
+{
+    "clientId": "1254b4cf-92bc-4b54-a83b-908d0b4c28c0",
+    "customerId": "c16f0889-6b3e-4d29-a46f-6c1971d15815",
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6"
+}
+Result (blacklist):
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "reject": true,
+    "buy": false,
+    "supplierId": null
+}
+
+Input:
+{
+    "clientId": "2916653e-e646-4109-9ed6-abfc5bcf2331",
+    "customerId": "c16f0889-6b3e-4d29-a46f-6c1971d15815",
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6"
+}
+Result (blacklist + whitelist):
+{
+    "productId": "6d05477b-7880-4efa-9a11-3412e0e9c5f6",
+    "reject": true,
+    "buy": false,
+    "supplierId": null
+}

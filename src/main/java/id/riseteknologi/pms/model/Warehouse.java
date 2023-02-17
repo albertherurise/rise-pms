@@ -3,6 +3,8 @@ package id.riseteknologi.pms.model;
 import java.math.BigDecimal;
 import java.util.UUID;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Warehouse extends BaseEntity {
 
   @ManyToOne
@@ -27,15 +30,12 @@ public class Warehouse extends BaseEntity {
   @JoinColumn(name = "product_id")
   private Product product;
 
-  private Long stock;
-
   private BigDecimal price;
 
-  public Warehouse(UUID id, Supplier supplier, Product product, Long stock, BigDecimal price) {
+  public Warehouse(UUID id, Supplier supplier, Product product, BigDecimal price) {
     super(id);
     this.supplier = supplier;
     this.product = product;
-    this.stock = stock;
     this.price = price;
   }
 

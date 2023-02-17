@@ -10,7 +10,7 @@ import org.drools.ruleunits.api.SingletonStore;
 import id.riseteknologi.pms.rule.input.model.Product;
 import id.riseteknologi.pms.rule.input.model.Supplier;
 import id.riseteknologi.pms.rule.input.model.SupplierChecker;
-import id.riseteknologi.pms.rule.input.model.SupplierPriceChanged;
+import id.riseteknologi.pms.rule.input.model.SupplierRise;
 import id.riseteknologi.pms.rule.model.BigDecimalWrapper;
 import id.riseteknologi.pms.rule.output.model.PurchaseDecision;
 
@@ -18,10 +18,6 @@ public class PurchaseUnit implements RuleUnitData {
 
   public static Boolean isLessThan(BigDecimal currentPrice, BigDecimalWrapper maxPrice) {
     return currentPrice.compareTo(maxPrice.getValue()) <= 0;
-  }
-
-  public static Boolean isLessThanAgain(BigDecimal currentPrice, BigDecimal risePrice) {
-    return currentPrice.compareTo(risePrice) < 0;
   }
 
   public static Boolean isLessThanPriceThreshold(BigDecimal currentPrice, BigDecimal risePrice,
@@ -32,9 +28,10 @@ public class PurchaseUnit implements RuleUnitData {
   private Long maxBuy;
   private BigDecimal priceThreshold;
   private SingletonStore<Product> product;
-  private SingletonStore<Supplier> rise;
-  private DataStore<SupplierPriceChanged> suppliers;
-  private Set<SupplierPriceChanged> eligibleSuppliers;
+  private SingletonStore<SupplierRise> rise;
+  private DataStore<Supplier> previousSuppliers;
+  private DataStore<Supplier> currentSuppliers;
+  private Set<Supplier> eligibleSuppliers;
   private PurchaseDecision purchaseDecision;
   private BigDecimalWrapper maxEligiblePrice;
   private Long firstStockThreshold;
@@ -43,28 +40,36 @@ public class PurchaseUnit implements RuleUnitData {
 
   public PurchaseUnit() {
     this(100L, new BigDecimal(0.7), DataSource.createSingleton(), DataSource.createSingleton(),
-        DataSource.createStore(), new HashSet<SupplierPriceChanged>(), new PurchaseDecision(),
-        new BigDecimalWrapper(new BigDecimal(0)), 100L, 200L, DataSource.createStore());
+        DataSource.createStore(), DataSource.createStore(), new HashSet<Supplier>(),
+        new PurchaseDecision(), new BigDecimalWrapper(new BigDecimal(0)), 100L, 200L,
+        DataSource.createStore());
   }
 
   public PurchaseUnit(Long maxBuy, BigDecimal priceThreshold, SingletonStore<Product> product,
-      SingletonStore<Supplier> rise, DataStore<SupplierPriceChanged> suppliers,
-      Set<SupplierPriceChanged> eligibleSuppliers, PurchaseDecision purchaseDecision,
-      BigDecimalWrapper maxEligiblePrice, Long firstStockThreshold, Long secondStockThreshold,
+      SingletonStore<SupplierRise> rise, DataStore<Supplier> previousSuppliers,
+      DataStore<Supplier> currentSuppliers, Set<Supplier> eligibleSuppliers,
+      PurchaseDecision purchaseDecision, BigDecimalWrapper maxEligiblePrice,
+      Long firstStockThreshold, Long secondStockThreshold,
       DataStore<SupplierChecker> supplierCheckers) {
     this.maxBuy = maxBuy;
     this.priceThreshold = priceThreshold;
     this.product = product;
     this.rise = rise;
-    this.suppliers = suppliers;
+    this.previousSuppliers = previousSuppliers;
+    this.currentSuppliers = currentSuppliers;
     this.eligibleSuppliers = eligibleSuppliers;
     this.purchaseDecision = purchaseDecision;
     this.maxEligiblePrice = maxEligiblePrice;
     this.firstStockThreshold = firstStockThreshold;
     this.secondStockThreshold = secondStockThreshold;
+    this.supplierCheckers = supplierCheckers;
   }
 
-  public Set<SupplierPriceChanged> getEligibleSuppliers() {
+  public DataStore<Supplier> getCurrentSuppliers() {
+    return currentSuppliers;
+  }
+
+  public Set<Supplier> getEligibleSuppliers() {
     return eligibleSuppliers;
   }
 
@@ -80,6 +85,10 @@ public class PurchaseUnit implements RuleUnitData {
     return maxEligiblePrice;
   }
 
+  public DataStore<Supplier> getPreviousSuppliers() {
+    return previousSuppliers;
+  }
+
   public BigDecimal getPriceThreshold() {
     return priceThreshold;
   }
@@ -92,7 +101,7 @@ public class PurchaseUnit implements RuleUnitData {
     return purchaseDecision;
   }
 
-  public SingletonStore<Supplier> getRise() {
+  public SingletonStore<SupplierRise> getRise() {
     return rise;
   }
 
@@ -104,11 +113,11 @@ public class PurchaseUnit implements RuleUnitData {
     return supplierCheckers;
   }
 
-  public DataStore<SupplierPriceChanged> getSuppliers() {
-    return suppliers;
+  public void setCurrentSuppliers(DataStore<Supplier> currentSuppliers) {
+    this.currentSuppliers = currentSuppliers;
   }
 
-  public void setEligibleSuppliers(Set<SupplierPriceChanged> eligibleSuppliers) {
+  public void setEligibleSuppliers(Set<Supplier> eligibleSuppliers) {
     this.eligibleSuppliers = eligibleSuppliers;
   }
 
@@ -124,6 +133,10 @@ public class PurchaseUnit implements RuleUnitData {
     this.maxEligiblePrice = maxEligiblePrice;
   }
 
+  public void setPreviousSuppliers(DataStore<Supplier> previousSuppliers) {
+    this.previousSuppliers = previousSuppliers;
+  }
+
   public void setPriceThreshold(BigDecimal priceThreshold) {
     this.priceThreshold = priceThreshold;
   }
@@ -136,7 +149,7 @@ public class PurchaseUnit implements RuleUnitData {
     this.purchaseDecision = purchaseDecision;
   }
 
-  public void setRise(SingletonStore<Supplier> rise) {
+  public void setRise(SingletonStore<SupplierRise> rise) {
     this.rise = rise;
   }
 
@@ -147,9 +160,4 @@ public class PurchaseUnit implements RuleUnitData {
   public void setSupplierCheckers(DataStore<SupplierChecker> supplierCheckers) {
     this.supplierCheckers = supplierCheckers;
   }
-
-  public void setSuppliers(DataStore<SupplierPriceChanged> suppliers) {
-    this.suppliers = suppliers;
-  }
-
 }

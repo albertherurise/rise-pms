@@ -16,31 +16,12 @@ then
 	transactionDecision.setProductId($transaction.getProductId());
 end
 
-rule "stock suppliers exist transaction is possible"
-salience 49
-when
-	exists /suppliers[ stock > 0 ]
-then
-	transactionDecision.setPossible(true);
-end
-
-
-rule "all stock empty transaction is not possible"
-salience 48
-when
-	$rise: /rise[ stock == 0 ]
-	not /suppliers[ stock > 0 ]
-then
-	transactionDecision.setPossible(false);
-end
-
 
 rule "use rise stock"
 salience 45
 when
 	$rise: /rise[ stock > 0 ]
 then
-	transactionDecision.setPossible(true);
 	transactionDecision.setBuy(false);
 	System.out.println("Use rise stock");
 end
@@ -51,9 +32,9 @@ salience 40
 when
 	$rise: /rise[ stock == 0 ]
 	$minimum: BigDecimal() from accumulate(
-				/suppliers[ $p : price, stock > 0 ],
+				/suppliers[ $p : price ],
 				min($p))
-	$supplier: /suppliers[ stock > 0, price == $minimum ]
+	$supplier: /suppliers[ price == $minimum ]
 then
 	transactionDecision.setBuy(true);
 	transactionDecision.setSupplierId($supplier.getId());

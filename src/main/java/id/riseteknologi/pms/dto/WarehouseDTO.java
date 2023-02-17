@@ -18,7 +18,6 @@ public class WarehouseDTO {
   private UUID supplierId;
   private String supplierName;
   private UUID productId;
-  private Long stock;
   private BigDecimal price;
 
 }

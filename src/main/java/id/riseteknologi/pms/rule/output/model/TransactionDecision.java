@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TransactionDecision {
   private UUID productId;
-  private Boolean possible;
+  private Boolean reject = false;
   private Boolean buy;
   private UUID supplierId;
 }

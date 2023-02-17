@@ -20,10 +20,10 @@ public class Supplier extends BaseEntity {
   private String name;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
-  private List<Warehouse> productWithStockList;
+  private List<Warehouse> warehouseList;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
-  private List<Whitelist> whitelist;
+  private List<Whitelist> whitelists;
 
   public Supplier(UUID id, String name) {
     super(id);
